@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-
+import { register } from "../api/auth";
+import {
+  useMutation,
+  QueryClient,
+  useQueryClient,
+} from "@tanstack/react-query";
 const Register = () => {
   const [userInfo, setUserInfo] = useState({});
 
@@ -11,8 +16,15 @@ const Register = () => {
     }
   };
 
+  const { mutate: registerU } = useMutation({
+    mutationFn: () => register(userInfo),
+    // onSuccess: () => {
+    //   QueryClient.invalidateQueries({ queryKey: ["register"] });
+    // },
+  });
   const handleFormSubmit = (e) => {
-    // e.preventDefault();
+    e.preventDefault();
+    registerU();
     // Add register logic here
   };
 

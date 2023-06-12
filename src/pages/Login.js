@@ -1,4 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { login } from "../api/auth";
+import {
+  useMutation,
+  QueryClient,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { UserContext } from "../context/UserContext";
+import { Navigate } from "react-router-dom";
 
 const Login = () => {
   const [userInfo, setUserInfo] = useState({});
@@ -6,10 +14,22 @@ const Login = () => {
   const handleChange = (e) => {
     setUserInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+  const [user, setUser] = useContext(UserContext);
+  const { mutate: loginFun } = useMutation({
+    mutationFn: () => login(userInfo),
+    onSuccess: () => {
+      setUser(true);
+    },
+    //  .invalidateQueries({ queryKey: ["login"] });
+  });
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    loginFun();
     // Add login logic here
   };
+  if (user) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div className="bg-gray-900 min-h-screen flex items-center justify-center absolute inset-0 z-[-1]">
